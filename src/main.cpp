@@ -8,6 +8,8 @@ void initialize()
 {
 	// Initialize Sharpsoft.
 	sharp::initialize();
+
+	sharp::start();
 }
 
 void disabled() { }

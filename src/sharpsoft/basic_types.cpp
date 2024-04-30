@@ -3,7 +3,6 @@
 
 using namespace sharp;
 
-
 sharp::color::color()
 {
     r = 0;
@@ -87,3 +86,25 @@ sharp::float2::operator int2() const
 {
     return int2(x, y);
 };
+
+sharp::int_rect::int_rect()
+{
+    left = 0;
+    top = 0;
+    width = 0;
+    height = 0;
+}
+sharp::int_rect::int_rect(int left, int top, int width, int height)
+{
+    this->left = left;
+    this->top = top;
+    this->width = width;
+    this->height = height;
+}
+sharp::int_rect::int_rect(const int2 pos, const int2 size)
+{
+    left = pos.x;
+    top = pos.y;
+    width = size.x;
+    height = size.y;
+}

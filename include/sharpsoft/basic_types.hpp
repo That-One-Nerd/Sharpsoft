@@ -41,4 +41,14 @@ namespace sharp
 
         operator int2() const;
     };
+
+    struct int_rect
+    {
+        int left, top;
+        int width, height;
+
+        int_rect();
+        int_rect(int left, int top, int width, int height);
+        int_rect(const int2 pos, const int2 size);
+    };
 }

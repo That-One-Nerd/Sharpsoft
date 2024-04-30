@@ -8,6 +8,7 @@ const global_properties global_properties::defaults =
 };
 
 bool init = false;
+bool started = false;
 color back_col;
 
 void sharp::initialize()
@@ -27,6 +28,7 @@ void sharp::initialize(const global_properties& props)
 void sharp::uninitialize()
 {
     if (!init) return;
+    if (started) sharp::end();
 
     // TODO
 
@@ -35,18 +37,44 @@ void sharp::uninitialize()
 
 void sharp::re_initialize()
 {
+    bool restart = started;
     if (!init) return;
     uninitialize();
     initialize();
+    if (restart) start();
 }
 void sharp::re_initialize(const global_properties& props)
 {
+    bool restart = started;
     if (!init) return;
     uninitialize();
     initialize();
+    if (restart) start();
 }
 
 bool sharp::is_initialized()
 {
     return init;
+}
+
+void sharp::start()
+{
+    if (!init || started) return;
+
+    // TODO
+
+    started = true;
+}
+void sharp::end()
+{
+    if (!init || !started) return;
+
+    // TODO
+
+    started = false;
+}
+
+bool sharp::is_started()
+{
+    return started;
 }
