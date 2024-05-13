@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sharpsoft/basic_types.hpp"
+#include "sharpsoft/window_types.hpp"
 
 namespace sharp
 {
