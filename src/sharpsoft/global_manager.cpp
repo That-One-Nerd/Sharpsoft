@@ -1,6 +1,12 @@
+#define SHARPSOFT_INTERNAL
+
+#include <string.h>
+#include <vector>
 #include "sharpsoft/global_misc.hpp"
+#include "sharpsoft/internal.hpp"
 
 using namespace sharp;
+using std::vector;
 
 const global_properties global_properties::defaults =
 {
@@ -10,6 +16,8 @@ const global_properties global_properties::defaults =
 bool init = false;
 bool started = false;
 color back_col;
+
+vector<window_base*> windows;
 
 void sharp::initialize()
 {
@@ -55,6 +63,21 @@ void sharp::re_initialize(const global_properties& props)
 bool sharp::is_initialized()
 {
     return init;
+}
+
+void sharp::internal::add_window(window_base* win_ptr, size_t size)
+{
+    void* copy_raw = malloc(size);
+    memcpy(copy_raw, (void*)(win_ptr), size);
+
+    window_base* copy = (window_base*)copy_raw;
+    windows.push_back(copy);
+}
+
+void sharp::test()
+{
+    window_base* item = windows.at(0);
+    item->paint();
 }
 
 void sharp::start()

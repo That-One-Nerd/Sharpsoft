@@ -18,6 +18,9 @@ namespace sharp
     protected:
         window_base(const std::string& title, const int2& pos, const int2& size);
 
+#ifdef SHARPSOFT_INTERNAL
+    public:
+#endif
         virtual void paint() = 0;
 
     public:

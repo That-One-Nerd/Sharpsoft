@@ -398,7 +398,8 @@
       }
     },
     "upload_options": {
-      "description": "Demo project for Sharpsoft. Currently contains the library's code. May be moved elsewhere in the future."
+      "description": "Demo project for Sharpsoft. Currently contains the library's code. May be moved elsewhere in the future.",
+      "slot": 3
     },
     "use_early_access": true
   }
