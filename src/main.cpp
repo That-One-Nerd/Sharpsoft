@@ -9,7 +9,7 @@ class test_window : public sharp::window_base
 protected:
 	void paint() override
 	{
-		printf("Printed: %d", test_variable);
+		printf("Printed: %d\n", test_variable);
 	}
 
 public:
@@ -29,7 +29,7 @@ void initialize()
 	test_window moment = test_window();
 	moment.test_variable = 3;
 
-	sharp::add_window(&moment);
+	sharp::add_window(moment);
 	sharp::start();
 }
 

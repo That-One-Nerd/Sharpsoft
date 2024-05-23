@@ -1,9 +1,11 @@
+#include "pros/rtos.hpp"
 #define SHARPSOFT_INTERNAL
 
 #include <string.h>
 #include <vector>
 #include "sharpsoft/global_misc.hpp"
 #include "sharpsoft/internal.hpp"
+#include "sharpsoft/interop.hpp"
 
 using namespace sharp;
 using std::vector;
@@ -16,12 +18,12 @@ const global_properties global_properties::defaults =
 bool init = false;
 bool started = false;
 color back_col;
+thread* render_thread = nullptr;
 
 vector<window_base*> windows;
 
 void sharp::initialize()
 {
-    if (init) return;
     sharp::initialize(global_properties::defaults);
 }
 void sharp::initialize(const global_properties& props)
@@ -65,6 +67,24 @@ bool sharp::is_initialized()
     return init;
 }
 
+void sharp::internal::render_iter()
+{
+    int window_count = windows.size();
+    for (int i = 0; i < window_count; i++)
+    {
+        window_base* win = windows.at(i);
+        win->paint();
+    }
+}
+void sharp::internal::render_loop()
+{
+    while (true)
+    {
+        render_iter();
+        thread::delay(100); // TODO: should be something else.
+    }
+}
+
 void sharp::internal::add_window(window_base* win_ptr, size_t size)
 {
     void* copy_raw = malloc(size);
@@ -74,17 +94,12 @@ void sharp::internal::add_window(window_base* win_ptr, size_t size)
     windows.push_back(copy);
 }
 
-void sharp::test()
-{
-    window_base* item = windows.at(0);
-    item->paint();
-}
-
 void sharp::start()
 {
     if (!init || started) return;
 
-    // TODO
+    render_thread = new thread(internal::render_loop);
+    render_thread->start();
 
     started = true;
 }
@@ -92,7 +107,8 @@ void sharp::end()
 {
     if (!init || !started) return;
 
-    // TODO
+    render_thread->stop();
+    delete render_thread;
 
     started = false;
 }
