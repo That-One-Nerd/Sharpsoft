@@ -16,6 +16,7 @@ namespace sharp
         static const global_properties defaults;
 
         color background_color;
+        float refresh_rate;
     };
 
     void initialize();

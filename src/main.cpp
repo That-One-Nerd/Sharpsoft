@@ -9,13 +9,17 @@ class test_window : public sharp::window_base
 protected:
 	void paint() override
 	{
-		printf("Printed: %d\n", test_variable);
+		printf("Paint called.\n");
+	}
+	void tick() override
+	{
+		printf("Tick called.\n");
 	}
 
 public:
     test_window() : window_base("Testing", sharp::int2(10, 10), sharp::int2(150, 100))
     {
-		
+		set_flag(sharp::CONTINUOUS_TICK, true);
     }
 
 	int test_variable;

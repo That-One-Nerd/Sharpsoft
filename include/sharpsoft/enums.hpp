@@ -6,6 +6,7 @@ namespace sharp
 {
     enum window_flags : uint32_t
     {
-        WINDOW_ACTIVE = 1,
+        CONTINUOUS_PAINT = 0x01,
+        CONTINUOUS_TICK  = 0x02,
     };
 }

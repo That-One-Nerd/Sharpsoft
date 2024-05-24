@@ -10,10 +10,19 @@ sharp::window_base::window_base(const string& title, const int2& pos, const int2
     posX = pos.x;
     posY = pos.y;
     width = size.x;
-    width = size.y;
+    height = size.y;
     flags = (window_flags)0;
+    active = false;
+    visible = true;
+
+    header_validated = false;
+    content_validated = false;
 }
 
+bool sharp::window_base::get_flag(window_flags flag) const
+{
+    return (flags & flag) > 0;
+}
 const int2 sharp::window_base::get_pos() const
 {
     return int2(posX, posY);
@@ -30,45 +39,79 @@ const string sharp::window_base::get_title() const
 {
     return title;
 }
-const bool sharp::window_base::is_active() const
+bool sharp::window_base::is_active() const
 {
-    return (flags & WINDOW_ACTIVE) > 0;
+    return active;
+}
+bool sharp::window_base::is_visible() const
+{
+    return visible;
 }
 
+void sharp::window_base::set_flag(window_flags flag, bool value)
+{
+    switch (flag)
+    {
+        case CONTINUOUS_PAINT:
+        case CONTINUOUS_TICK:
+            break; // No invalidation.
+    }
+
+    if (value) flags = (window_flags)(flags | flag);
+    else flags = (window_flags)(flags & ~flag);
+}
 void sharp::window_base::set_pos(const int2& new_pos)
 {
-    // TODO: I'll have to re-render some parts.
+    // TODO: This will affect windows below it.
+
     posX = new_pos.x;
-    posY = new_pos.y;
+    posY = new_pos.y;    
+    header_validated = false;
+    content_validated = false;
 }
 void sharp::window_base::set_size(const int2& new_pos)
 {
-    // TODO: I'll have to re-render some parts.
+    // TODO: This will affect windows below it.
+
     width = new_pos.x;
     height = new_pos.y;
+    header_validated = false;
+    content_validated = false;
 }
 void sharp::window_base::set_window_rect(const int_rect& new_rect)
 {
-    // TODO: I'll have to re-render some parts.
+    // TODO: This will affect windows below it.
+
     posX = new_rect.left;
     posY = new_rect.top;
     width = new_rect.width;
     height = new_rect.height;
+    header_validated = false;
+    content_validated = false;
 }
 void sharp::window_base::set_title(const std::string& new_title)
 {
     title = new_title;
+    header_validated = false;
+}
+
+void sharp::window_base::invalidate()
+{
+    header_validated = false;
+    content_validated = false;
 }
 
 void sharp::window_base::hide()
 {
     // TODO: This will affect the renderer
 
-    flags = (window_flags)(flags & ~WINDOW_ACTIVE);
+    visible = false;
 }
 void sharp::window_base::show()
 {
     // TODO: This will affect the renderer
 
-    flags = (window_flags)(flags | WINDOW_ACTIVE);
+    visible = true;
+    header_validated = false;
+    content_validated = false;
 }
