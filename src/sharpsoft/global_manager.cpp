@@ -92,7 +92,10 @@ void sharp::internal::render_iter()
         }
 
         // Now render anything that is invalidated.
-        if (!HAS_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED))
+        // If the header is set to sync with the content validation, render it
+        // regardless of if it would otherwise.
+        if (!HAS_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED) ||
+            (!HAS_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED) && HAS_WINDOW_FLAG(win, HEADER_UPDATE)))
         {
             win->paint_header();
             ON_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED);

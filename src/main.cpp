@@ -12,8 +12,11 @@ protected:
 		static int frame = 0;
 		frame++;
 
-		sharp::color back_col(0, frame % 256, 0);
-		style().background_color = back_col;
+		style() = 
+		{
+			sharp::color(frame % 256, 0, 0),
+			sharp::color(0, 0, frame % 256)
+		};
 	}
 	void tick() override
 	{
@@ -23,7 +26,9 @@ protected:
 public:
     test_window() : window_base("Testing", sharp::int2(10, 10), sharp::int2(150, 100))
     {
+		set_flag(sharp::CONTINUOUS_PAINT, true);
 		set_flag(sharp::CONTINUOUS_TICK, false);
+		set_flag(sharp::HEADER_UPDATE, true);
     }
 };
 
