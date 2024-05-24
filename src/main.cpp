@@ -23,7 +23,7 @@ protected:
 public:
     test_window() : window_base("Testing", sharp::int2(10, 10), sharp::int2(150, 100))
     {
-		set_flag(sharp::CONTINUOUS_PAINT, true);
+		set_flag(sharp::CONTINUOUS_TICK, false);
     }
 };
 

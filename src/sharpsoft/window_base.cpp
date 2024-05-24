@@ -19,8 +19,8 @@ sharp::window_base::window_base(const string& title, const int2& pos, const int2
     posY = pos.y;
     width = size.x;
     height = size.y;
-    flags = (window_flags)0;
-    int_flags = WINDOW_VISIBLE;
+    flags = (window_flags)(CONTINUOUS_TICK);
+    int_flags = (window_internal_flags)WINDOW_VISIBLE;
     styles = window_styles::defaults;
 }
 
