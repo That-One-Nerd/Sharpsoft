@@ -2,10 +2,10 @@
 
 #include <string.h>
 #include <vector>
-#include "sharpsoft/enums.hpp"
 #include "sharpsoft/global_misc.hpp"
 #include "sharpsoft/internal.hpp"
 #include "sharpsoft/interop.hpp"
+#include "sharpsoft/windowing.hpp"
 
 using namespace sharp;
 using std::vector;
@@ -86,18 +86,22 @@ void sharp::internal::render_iter()
         if (HAS_WINDOW_FLAG(win, CONTINUOUS_TICK)) win->tick();
 
         // Apply any possible invalidations.
-        if (HAS_WINDOW_FLAG(win, CONTINUOUS_PAINT)) win->content_validated = false;
+        if (HAS_WINDOW_FLAG(win, CONTINUOUS_PAINT))
+        {
+            OFF_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED);
+        }
 
         // Now render anything that is invalidated.
-        if (!win->content_validated)
-        {
-            win->paint();
-            win->content_validated = true;
-        }
-        if (!win->header_validated)
+        if (!HAS_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED))
         {
             win->paint_header();
-            win->header_validated = true;
+            ON_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED);
+        }
+        if (!HAS_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED))
+        {
+            win->paint_content_back();
+            win->paint();
+            ON_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED);
         }
     }
 }
@@ -118,7 +122,7 @@ void sharp::internal::add_window(window_base* win_ptr, size_t size)
 
     window_base* copy = (window_base*)copy_raw;
     windows.push_back(copy);
-    copy->active = true;
+    ON_INTERNAL_FLAG(copy, WINDOW_ACTIVE);
 }
 
 void sharp::start()

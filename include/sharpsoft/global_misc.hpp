@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sharpsoft/basic_types.hpp"
-#include "sharpsoft/window_types.hpp"
+#include "sharpsoft/windowing.hpp"
 
 #define SHARPSOFT_INTERNAL
 #include "internal.hpp"

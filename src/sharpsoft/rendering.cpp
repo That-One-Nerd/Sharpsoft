@@ -2,7 +2,7 @@
 
 #include "sharpsoft/internal.hpp"
 #include "sharpsoft/macros.hpp"
-#include "sharpsoft/window_types.hpp"
+#include "sharpsoft/windowing.hpp"
 
 #ifdef SH_PROS_ACTIVE
 #include "pros/screen.hpp"
@@ -23,9 +23,13 @@ void internal::fill_global_rectangle(const color& color, const int_rect& rect)
 }
 #endif
 
-void window_base::paint_header()
+void window_base::paint_header() const
 {
     // Draw outline.
-    const color outline_color = color(255, 255, 255);
-    internal::draw_global_rectangle(outline_color, int_rect(posX - 1, posY - 1, width + 1, height + 1));
+    internal::draw_global_rectangle(styles.outline_color, int_rect(posX - 1, posY - 1, width + 1, height + 1));
+}
+void window_base::paint_content_back() const
+{
+    // Draw background.
+    internal::fill_global_rectangle(styles.background_color, int_rect(posX, posY, width, height));
 }

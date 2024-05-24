@@ -1,8 +1,16 @@
-#include "enums.hpp"
-#include "sharpsoft/window_types.hpp"
+#define SHARPSOFT_INTERNAL
+
+#include "sharpsoft/internal.hpp"
+#include "sharpsoft/windowing.hpp"
 
 using std::string;
 using namespace sharp;
+
+const sharp::window_styles sharp::window_styles::defaults =
+{
+    color(0, 0, 0),
+    color(255, 255, 255)
+};
 
 sharp::window_base::window_base(const string& title, const int2& pos, const int2& size)
 {
@@ -12,13 +20,18 @@ sharp::window_base::window_base(const string& title, const int2& pos, const int2
     width = size.x;
     height = size.y;
     flags = (window_flags)0;
-    active = false;
-    visible = true;
-
-    header_validated = false;
-    content_validated = false;
+    int_flags = WINDOW_VISIBLE;
+    styles = window_styles::defaults;
 }
 
+const window_styles& sharp::window_base::style() const
+{
+    return styles;
+}
+window_styles& sharp::window_base::style()
+{
+    return styles;
+}
 bool sharp::window_base::get_flag(window_flags flag) const
 {
     return (flags & flag) > 0;
@@ -41,11 +54,11 @@ const string sharp::window_base::get_title() const
 }
 bool sharp::window_base::is_active() const
 {
-    return active;
+    return HAS_INTERNAL_FLAG(this, WINDOW_ACTIVE);
 }
 bool sharp::window_base::is_visible() const
 {
-    return visible;
+    return HAS_INTERNAL_FLAG(this, WINDOW_VISIBLE);
 }
 
 void sharp::window_base::set_flag(window_flags flag, bool value)
@@ -66,8 +79,8 @@ void sharp::window_base::set_pos(const int2& new_pos)
 
     posX = new_pos.x;
     posY = new_pos.y;    
-    header_validated = false;
-    content_validated = false;
+    OFF_INTERNAL_FLAG(this, WINDOW_HEADER_VALIDATED);
+    OFF_INTERNAL_FLAG(this, WINDOW_CONTENT_VALIDATED);
 }
 void sharp::window_base::set_size(const int2& new_pos)
 {
@@ -75,8 +88,8 @@ void sharp::window_base::set_size(const int2& new_pos)
 
     width = new_pos.x;
     height = new_pos.y;
-    header_validated = false;
-    content_validated = false;
+    OFF_INTERNAL_FLAG(this, WINDOW_HEADER_VALIDATED);
+    OFF_INTERNAL_FLAG(this, WINDOW_CONTENT_VALIDATED);
 }
 void sharp::window_base::set_window_rect(const int_rect& new_rect)
 {
@@ -86,32 +99,32 @@ void sharp::window_base::set_window_rect(const int_rect& new_rect)
     posY = new_rect.top;
     width = new_rect.width;
     height = new_rect.height;
-    header_validated = false;
-    content_validated = false;
+    OFF_INTERNAL_FLAG(this, WINDOW_HEADER_VALIDATED);
+    OFF_INTERNAL_FLAG(this, WINDOW_CONTENT_VALIDATED);
 }
 void sharp::window_base::set_title(const std::string& new_title)
 {
     title = new_title;
-    header_validated = false;
+    OFF_INTERNAL_FLAG(this, WINDOW_HEADER_VALIDATED);
 }
 
 void sharp::window_base::invalidate()
 {
-    header_validated = false;
-    content_validated = false;
+    OFF_INTERNAL_FLAG(this, WINDOW_HEADER_VALIDATED);
+    OFF_INTERNAL_FLAG(this, WINDOW_CONTENT_VALIDATED);
 }
 
 void sharp::window_base::hide()
 {
     // TODO: This will affect the renderer
 
-    visible = false;
+    OFF_INTERNAL_FLAG(this, WINDOW_VISIBLE);
 }
 void sharp::window_base::show()
 {
     // TODO: This will affect the renderer
 
-    visible = true;
-    header_validated = false;
-    content_validated = false;
+    ON_INTERNAL_FLAG(this, WINDOW_VISIBLE);
+    OFF_INTERNAL_FLAG(this, WINDOW_HEADER_VALIDATED);
+    OFF_INTERNAL_FLAG(this, WINDOW_CONTENT_VALIDATED);
 }

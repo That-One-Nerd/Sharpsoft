@@ -4,10 +4,30 @@
 #include <inttypes.h>
 #include <string>
 #include "sharpsoft/basic_types.hpp"
-#include "sharpsoft/enums.hpp"
 
 namespace sharp
 {
+    enum window_flags : uint32_t
+    {
+        CONTINUOUS_PAINT = 0x01,
+        CONTINUOUS_TICK  = 0x02,
+    };
+    enum window_internal_flags : uint32_t
+    {
+        WINDOW_ACTIVE            = 0x01,
+        WINDOW_VISIBLE           = 0x02,
+        WINDOW_HEADER_VALIDATED  = 0x04,
+        WINDOW_CONTENT_VALIDATED = 0x08
+    };
+
+    struct window_styles
+    {
+        static const window_styles defaults;
+
+        color background_color;
+        color outline_color;
+    };
+
     class window_base
     {
 #ifdef SHARPSOFT_INTERNAL
@@ -19,12 +39,11 @@ namespace sharp
         uint16_t width, height;
         std::string title;
         window_flags flags;
-        bool active, visible;
+        window_internal_flags int_flags;
+        window_styles styles;
 
-        bool header_validated;
-        bool content_validated;
-
-        void paint_header();
+        void paint_header() const;
+        void paint_content_back() const;
 
 #ifndef SHARPSOFT_INTERNAL
     protected:
@@ -35,6 +54,9 @@ namespace sharp
         virtual void tick() = 0;
 
     public:
+        const window_styles& style() const;
+        window_styles& style();
+
         bool get_flag(window_flags flag) const;
         const int2 get_pos() const;
         const int2 get_size() const;

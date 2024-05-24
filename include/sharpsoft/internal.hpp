@@ -2,9 +2,12 @@
 
 #ifdef SHARPSOFT_INTERNAL
 #include "basic_types.hpp"
-#include "window_types.hpp"
+#include "windowing.hpp"
 
 #define HAS_WINDOW_FLAG(pwin, flag) ((pwin->flags & flag) > 0)
+#define HAS_INTERNAL_FLAG(pwin, flag) ((pwin->int_flags & flag) > 0)
+#define ON_INTERNAL_FLAG(pwin, flag) pwin->int_flags = (window_internal_flags)(pwin->int_flags | flag)
+#define OFF_INTERNAL_FLAG(pwin, flag) pwin->int_flags = (window_internal_flags)(pwin->int_flags & ~flag)
 
 namespace sharp
 {
