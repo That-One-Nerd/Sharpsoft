@@ -77,4 +77,6 @@ namespace sharp
         void show();
         void hide();
     };
+
+    bool windows_intersect(const window_base& winA, const window_base& winB);
 }

@@ -6,12 +6,6 @@
 using std::string;
 using namespace sharp;
 
-const sharp::window_styles sharp::window_styles::defaults =
-{
-    color(0, 0, 0),
-    color(255, 255, 255)
-};
-
 sharp::window_base::window_base(const string& title, const int2& pos, const int2& size)
 {
     this->title = title;
