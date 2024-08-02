@@ -1,5 +1,7 @@
 #include "main.h"
 #include "sharpsoft/all.hpp"
+#include "sharpsoft/basic_types.hpp"
+#include "sharpsoft/windowing.hpp"
 
 // This library is intended to be referenced by the prefix `sharp::`
 // Including `using namespace sharp;` is not recommended.
@@ -9,14 +11,7 @@ class test_window : public sharp::window_base
 protected:
 	void paint() override
 	{
-		static int frame = 0;
-		frame++;
-
-		style() = 
-		{
-			sharp::color(frame % 256, 0, 0),
-			sharp::color(0, 0, frame % 256)
-		};
+		
 	}
 	void tick() override
 	{
@@ -26,9 +21,9 @@ protected:
 public:
     test_window() : window_base("Testing", sharp::int2(10, 10), sharp::int2(150, 100))
     {
-		set_flag(sharp::CONTINUOUS_PAINT, true);
-		set_flag(sharp::CONTINUOUS_TICK, false);
-		set_flag(sharp::HEADER_UPDATE, true);
+		features().continuous_paint = true;
+		features().continuous_tick = false;
+		features().update_header = true;
     }
 };
 

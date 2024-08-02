@@ -1,6 +1,6 @@
 #pragma once
 
-#include <inttypes.h>
+#include <cstdint>
 
 namespace sharp
 {
@@ -50,5 +50,22 @@ namespace sharp
         int_rect();
         int_rect(int left, int top, int width, int height);
         int_rect(const int2 pos, const int2 size);
+
+        const int2 tl() const; // Top left
+        const int2 tr() const; // Top right
+        const int2 bl() const; // Bottom left
+        const int2 br() const; // Bottom right
+
+        bool contains(const int2& point) const;
+        bool contains(const int_rect& rect) const; // Fully contains other rect.
+
+        bool intersects(const int_rect& rect) const; // Partially contains other rect.
+    };
+
+    enum size
+    {
+        SMALL = -1,
+        NORMAL = 0,
+        LARGE = 1
     };
 }

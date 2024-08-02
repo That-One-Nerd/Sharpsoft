@@ -108,3 +108,38 @@ sharp::int_rect::int_rect(const int2 pos, const int2 size)
     width = size.x;
     height = size.y;
 }
+
+const int2 sharp::int_rect::tl() const
+{
+    return int2(top, left);
+}
+const int2 sharp::int_rect::tr() const
+{
+    return int2(top, left + width);
+}
+const int2 sharp::int_rect::bl() const
+{
+    return int2(top + height, left);
+}
+const int2 sharp::int_rect::br() const
+{
+    return int2(top + height, left + width);
+}
+
+bool sharp::int_rect::contains(const int2& point) const
+{
+    return point.x >= left && point.x <= left + width &&
+           point.y >= top  && point.y <= top + height;
+}
+bool sharp::int_rect::contains(const int_rect& rect) const
+{
+    return contains(rect.tl()) && contains(rect.tr());
+}
+
+bool sharp::int_rect::intersects(const int_rect& rect) const
+{
+    // Top row is if this rect contains point of other rect.
+    // Bottom row is if other rect contains point of this rect.
+    return contains(rect.tl()) || contains(rect.tr()) || contains(rect.bl()) || contains(rect.br()) ||
+           rect.contains(tl()) || rect.contains(tr()) || rect.contains(bl()) || rect.contains(br());
+}

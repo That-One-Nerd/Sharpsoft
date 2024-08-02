@@ -43,7 +43,12 @@ void sharp::uninitialize()
     if (!init) return;
     if (started) sharp::end();
 
-    // TODO
+    // Dispose of all windows.
+    for (int i = 0; i < windows.size(); i++)
+    {
+        delete windows.at(i);
+    }
+    windows.clear();
 
     init = false;
 }
@@ -81,12 +86,13 @@ void sharp::internal::render_iter()
     {
         window_base* win = windows.at(i);
         // First handle special stuff.
+        // TODO: if the window is null, display an error?
 
         // Now tick the window if applicable.
-        if (HAS_WINDOW_FLAG(win, CONTINUOUS_TICK)) win->tick();
+        if (win->win_features.continuous_tick) win->tick();
 
         // Apply any possible invalidations.
-        if (HAS_WINDOW_FLAG(win, CONTINUOUS_PAINT))
+        if (win->win_features.continuous_paint)
         {
             OFF_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED);
         }
@@ -95,7 +101,7 @@ void sharp::internal::render_iter()
         // If the header is set to sync with the content validation, render it
         // regardless of if it would otherwise.
         if (!HAS_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED) ||
-            (!HAS_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED) && HAS_WINDOW_FLAG(win, HEADER_UPDATE)))
+            (!HAS_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED) && win->win_features.update_header))
         {
             win->paint_header();
             ON_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED);
@@ -120,6 +126,17 @@ void sharp::internal::render_loop()
 
 void sharp::internal::add_window(window_base* win_ptr, size_t size)
 {
+    // Make copy of window so it remains in scope.
+    // There must be a better way to do this, but I don't know it.
+    // If you don't do this, then if windows are created in a method,
+    // then when that scope is terminated, a null pointer is created.
+    // However, when a copy is made, from that point onward the original
+    // in the method no longer affects the copy.
+    
+    // Maybe instead a reference could be added to the original pointer
+    // to prevent it going out of scope with shared_ptr? Don't know,
+    // never used it.
+
     void* copy_raw = malloc(size);
     memcpy(copy_raw, (void*)(win_ptr), size);
 

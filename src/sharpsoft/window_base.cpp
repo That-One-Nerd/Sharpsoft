@@ -13,9 +13,15 @@ sharp::window_base::window_base(const string& title, const int2& pos, const int2
     posY = pos.y;
     width = size.x;
     height = size.y;
-    flags = (window_flags)(CONTINUOUS_TICK);
     int_flags = (window_internal_flags)WINDOW_VISIBLE;
+
+    win_features = window_features::defaults;
     styles = window_styles::defaults;
+}
+sharp::window_base::~window_base()
+{
+    // Dispose of window.
+    title.~basic_string();
 }
 
 const window_styles& sharp::window_base::style() const
@@ -26,9 +32,13 @@ window_styles& sharp::window_base::style()
 {
     return styles;
 }
-bool sharp::window_base::get_flag(window_flags flag) const
+const window_features& sharp::window_base::features() const
 {
-    return (flags & flag) > 0;
+    return win_features;
+}
+window_features& sharp::window_base::features()
+{
+    return win_features;
 }
 const int2 sharp::window_base::get_pos() const
 {
@@ -38,9 +48,26 @@ const int2 sharp::window_base::get_size() const
 {
     return int2(width, height);
 }
+const int_rect sharp::window_base::get_content_rect() const
+{
+    int header_height = get_header_height();
+    if (header_height > 0) return int_rect(posX, posY + header_height + 1, width, height);
+    else return int_rect(posX, posY, width, height);
+}
+const int_rect sharp::window_base::get_header_rect() const
+{
+    return int_rect(posX, posY, width, get_header_height());
+}
+int sharp::window_base::get_header_height() const
+{
+    if (win_features.show_header) return sharp::get_header_height(styles.header_size);
+    else return 0;
+}
 const int_rect sharp::window_base::get_window_rect() const
 {
-    return int_rect(posX, posY, width, height);
+    int header_height = get_header_height();
+    if (header_height > 0) return int_rect(posX - 1, posY - 1, width + 2, height + header_height + 3);
+    else return int_rect(posX - 1, posY - 1, width + 2, height + 2);
 }
 const string sharp::window_base::get_title() const
 {
@@ -55,18 +82,6 @@ bool sharp::window_base::is_visible() const
     return HAS_INTERNAL_FLAG(this, WINDOW_VISIBLE);
 }
 
-void sharp::window_base::set_flag(window_flags flag, bool value)
-{
-    switch (flag)
-    {
-        case CONTINUOUS_PAINT:
-        case CONTINUOUS_TICK:
-            break; // No invalidation.
-    }
-
-    if (value) flags = (window_flags)(flags | flag);
-    else flags = (window_flags)(flags & ~flag);
-}
 void sharp::window_base::set_pos(const int2& new_pos)
 {
     // TODO: This will affect windows below it.
