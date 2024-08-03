@@ -3,6 +3,146 @@
 
 using namespace sharp;
 
+using std::max;
+using std::min;
+
+static constexpr double degrees_per_turn = 360;
+static constexpr double radians_per_turn = 2 * pi;
+static constexpr double gradians_per_turn = 400;
+
+sharp::angle::angle()
+{
+    value = 0;
+}
+sharp::angle::angle(const angle& copy)
+{
+    value = copy.value;
+}
+sharp::angle::angle(double amount, angle_type unit)
+{
+    set(amount, unit);
+}
+double sharp::angle::get(angle_type unit) const
+{
+    switch (unit)
+    {
+        case DEGREES: return degrees();
+        case RADIANS: return radians();
+        case GRADIANS: return gradians();
+        case TURNS: return turns();
+        default: return 0.0;
+    }
+}
+double sharp::angle::degrees() const
+{
+    return degrees_per_turn * value;
+}
+double sharp::angle::radians() const
+{
+    return radians_per_turn * value;
+}
+double sharp::angle::gradians() const
+{
+    return gradians_per_turn * value;
+}
+double sharp::angle::turns() const
+{
+    return value;
+}
+void sharp::angle::set(double value, angle_type unit)
+{
+    switch (unit)
+    {
+        case DEGREES: degrees(value);
+        case RADIANS: radians(value);
+        case GRADIANS: gradians(value);
+        case TURNS: turns(value);
+        default: return;
+    }
+}
+void sharp::angle::degrees(double deg)
+{
+    value = deg / degrees_per_turn;
+}
+void sharp::angle::radians(double rad)
+{
+    value = rad / radians_per_turn;
+}
+void sharp::angle::gradians(double grad)
+{
+    value = grad / gradians_per_turn;
+}
+void sharp::angle::turns(double turns)
+{
+    value = turns;
+}
+// Doing this somewhat convoluted set system because I don't
+// want to run unneccessary unit detection, I know I'm working
+// with the raw turns.
+const angle sharp::angle::operator+(const angle& other) const
+{
+    angle result = angle();
+    result.value = value + other.value;
+    return result;
+}
+const angle sharp::angle::operator-() const
+{
+    angle result = angle();
+    result.value = -value;
+    return result;
+}
+const angle sharp::angle::operator-(const angle& other) const
+{
+    angle result = angle();
+    result.value = value - other.value;
+    return result;
+}
+const angle sharp::angle::operator*(double factor) const
+{
+    angle result = angle();
+    result.value = value * factor;
+    return result;
+}
+const angle sharp::angle::operator/(double factor) const
+{
+    angle result = angle();
+    result.value = value / factor;
+    return result;
+}
+// These are shorthands.
+const angle sharp::operator""_deg(long double val)
+{
+    return angle(val, DEGREES);
+}
+const angle sharp::operator""_deg(unsigned long long val)
+{
+    return angle(val, DEGREES);
+}
+const angle sharp::operator""_rad(long double val)
+{
+    return angle(val, RADIANS);
+}
+const angle sharp::operator""_rad(unsigned long long val)
+{
+    return angle(val, RADIANS);
+}
+const angle sharp::operator""_grad(long double val)
+{
+    return angle(val, GRADIANS);
+}
+const angle sharp::operator""_grad(unsigned long long val)
+{
+    return angle(val, GRADIANS);
+}
+const angle sharp::operator""_turns(long double val)
+{
+    return angle(val, TURNS);
+}
+const angle sharp::operator""_turns(unsigned long long val)
+{
+    return angle(val, TURNS);
+}
+
 sharp::color::color()
 {
     r = 0;
@@ -140,7 +280,12 @@ sharp::int_rect::int_rect(const int2 pos, const int2 size)
     width = size.x;
     height = size.y;
 }
-
+const int_rect sharp::int_rect::from_corners(const int2& a, const int2& b)
+{
+    int2 tl = int2(min(a.x, b.x), min(a.y, b.y));
+    int2 size = int2(max(a.x, b.x) - tl.x, max(a.y, b.y) - tl.y);
+    return int_rect(tl, size);
+}
 const int2 sharp::int_rect::tl() const
 {
     return int2(top, left);

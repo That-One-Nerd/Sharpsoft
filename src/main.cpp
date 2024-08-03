@@ -16,7 +16,7 @@ protected:
 	{
 		constexpr int points = 5;
 
-		int bigRadius = 100,
+		int bigRadius = 105,
 			smallRadius = 60;
 
 		sharp::int2 center = get_size() / 2;
@@ -35,7 +35,7 @@ protected:
 		{
 			sharp::int2& this_point = arr[i],
 						 next_point = arr[(i + 1) % (points * 2)];
-			draw_line(0xABCDEF, this_point, next_point);
+			fill_rect(0x28b56e, sharp::int_rect::from_corners(this_point, next_point));
 		}
 	}
 	void tick() override

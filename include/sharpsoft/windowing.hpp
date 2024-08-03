@@ -72,7 +72,7 @@ namespace sharp
         void draw_line(const color& color, const int2& start, const int2& end);
         //void draw_rect(const color& color, const int_rect& rect);
 
-        //void fill_rect(const color& color, const int_rect& rect);
+        void fill_rect(const color& color, const int_rect& rect);
 
     public:
         const window_styles& style() const;

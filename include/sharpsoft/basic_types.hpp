@@ -1,9 +1,58 @@
 #pragma once
 
 #include <cstdint>
+#include <numbers>
+
+using std::numbers::pi;
 
 namespace sharp
 {
+    enum angle_type
+    {
+        DEGREES  = 10,
+        RADIANS  = 11,
+        GRADIANS = 12,
+        TURNS    = 13
+    };
+    struct angle
+    {
+    private:
+        double value;
+
+    public:
+        angle();
+        angle(const angle& copy);
+        angle(double amount, angle_type unit);
+
+        double get(angle_type unit) const;
+
+        double degrees() const;
+        double radians() const;
+        double gradians() const;
+        double turns() const;
+
+        void set(double value, angle_type unit);
+
+        void degrees(double deg);
+        void radians(double rad);
+        void gradians(double grad);
+        void turns(double turns);
+
+        const angle operator+(const angle& other) const;
+        const angle operator-() const;
+        const angle operator-(const angle& other) const;
+        const angle operator*(double factor) const;
+        const angle operator/(double factor) const;
+    };
+    const angle operator""_deg(long double val);
+    const angle operator""_deg(unsigned long long val);
+    const angle operator""_rad(long double val);
+    const angle operator""_rad(unsigned long long val);
+    const angle operator""_grad(long double val);
+    const angle operator""_grad(unsigned long long val);
+    const angle operator""_turns(long double val);
+    const angle operator""_turns(unsigned long long val);
+
     struct color
     {
         uint8_t r, g, b, a;
@@ -60,6 +109,8 @@ namespace sharp
         int_rect();
         int_rect(int left, int top, int width, int height);
         int_rect(const int2 pos, const int2 size);
+
+        static const int_rect from_corners(const int2& a, const int2& b);
 
         const int2 tl() const; // Top left
         const int2 tr() const; // Top right
