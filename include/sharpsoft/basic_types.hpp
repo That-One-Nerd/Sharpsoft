@@ -29,6 +29,11 @@ namespace sharp
         double magnitude() const;
         
         operator float2() const;
+
+        const int2 operator+(const int2& other) const;
+        const int2 operator-(const int2& other) const;
+        const int2 operator*(const int factor) const;
+        const int2 operator/(const int factor) const;
     };
     struct float2
     {
@@ -40,6 +45,11 @@ namespace sharp
         double magnitude() const;
 
         operator int2() const;
+
+        const float2 operator+(const float2& other) const;
+        const float2 operator-(const float2& other) const;
+        const float2 operator*(const double factor) const;
+        const float2 operator/(const double factor) const;
     };
 
     struct int_rect

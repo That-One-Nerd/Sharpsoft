@@ -36,4 +36,7 @@ namespace sharp
     void start();
     void end();
     bool is_started();
+
+    double get_delta_time();
+    double get_elapsed_time();
 }

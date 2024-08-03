@@ -10,9 +10,14 @@ namespace sharp
         WINDOW_ACTIVE            = 0x01,
         WINDOW_VISIBLE           = 0x02,
         WINDOW_HEADER_VALIDATED  = 0x04,
-        WINDOW_CONTENT_VALIDATED = 0x08
+        WINDOW_CONTENT_VALIDATED = 0x08,
+        WINDOW_IS_IN_PAINT_MODE  = 0x10
     };
 
+    // Can't tell if these are good ideas.
+    // FIXME: Messing with the header here requires a full screen
+    //        invalidation triggered by the user, because I can't
+    //        detect when its variables are modified.
     struct window_features
     {
         static const window_features defaults;
@@ -49,6 +54,8 @@ namespace sharp
         window_features win_features;
         window_styles styles;
 
+        double elapsed_time;
+
         void paint_header() const;
         void paint_content_back() const;
 
@@ -61,6 +68,12 @@ namespace sharp
         virtual void paint() = 0;
         virtual void tick() = 0;
 
+        void draw_pixel(const color& color, const int2& pos);
+        void draw_line(const color& color, const int2& start, const int2& end);
+        //void draw_rect(const color& color, const int_rect& rect);
+
+        //void fill_rect(const color& color, const int_rect& rect);
+
     public:
         const window_styles& style() const;
         window_styles& style();
@@ -68,6 +81,7 @@ namespace sharp
         const window_features& features() const;
         window_features& features();
 
+        double get_elapsed_time() const;
         const int2 get_pos() const;
         const int2 get_size() const;
         const int_rect get_content_rect() const;
@@ -82,6 +96,9 @@ namespace sharp
         void set_size(const int2& new_size);
         void set_window_rect(const int_rect& new_rect);
         void set_title(const std::string& new_title);
+
+        const int2 to_screen(const int2& window_pos) const;
+        const int2 to_window(const int2& screen_pos) const;
 
         void invalidate();
 

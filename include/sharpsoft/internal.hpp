@@ -17,6 +17,7 @@ namespace sharp
         void render_iter();
         void render_loop();
 
+        void draw_global_pixel(const color& color, const int2& pos);
         void draw_global_line(const color& color, const int2& start, const int2& end);
         void draw_global_rectangle(const color& color, const int_rect& rect);
         void fill_global_rectangle(const color& color, const int_rect& rect);

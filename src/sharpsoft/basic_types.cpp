@@ -67,6 +67,22 @@ sharp::int2::operator float2() const
 {
     return float2(x, y);
 }
+const int2 sharp::int2::operator+(const int2& other) const
+{
+    return int2(x + other.x, y + other.y);
+}
+const int2 sharp::int2::operator-(const int2& other) const
+{
+    return int2(x - other.x, y - other.y);
+}
+const int2 sharp::int2::operator*(const int factor) const
+{
+    return int2(x * factor, y * factor);
+}
+const int2 sharp::int2::operator/(const int factor) const
+{
+    return int2(x / factor, y / factor);
+}
 
 sharp::float2::float2()
 {
@@ -86,6 +102,22 @@ sharp::float2::operator int2() const
 {
     return int2(x, y);
 };
+const float2 sharp::float2::operator+(const float2& other) const
+{
+    return float2(x + other.x, y + other.y);
+}
+const float2 sharp::float2::operator-(const float2& other) const
+{
+    return float2(x - other.x, y - other.y);
+}
+const float2 sharp::float2::operator*(const double factor) const
+{
+    return float2(x * factor, y * factor);
+}
+const float2 sharp::float2::operator/(const double factor) const
+{
+    return float2(x / factor, y / factor);
+}
 
 sharp::int_rect::int_rect()
 {

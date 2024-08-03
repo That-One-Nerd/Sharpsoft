@@ -17,6 +17,8 @@ sharp::window_base::window_base(const string& title, const int2& pos, const int2
 
     win_features = window_features::defaults;
     styles = window_styles::defaults;
+
+    elapsed_time = 0;
 }
 sharp::window_base::~window_base()
 {
@@ -39,6 +41,10 @@ const window_features& sharp::window_base::features() const
 window_features& sharp::window_base::features()
 {
     return win_features;
+}
+double sharp::window_base::get_elapsed_time() const
+{
+    return elapsed_time;
 }
 const int2 sharp::window_base::get_pos() const
 {
@@ -136,4 +142,17 @@ void sharp::window_base::show()
     ON_INTERNAL_FLAG(this, WINDOW_VISIBLE);
     OFF_INTERNAL_FLAG(this, WINDOW_HEADER_VALIDATED);
     OFF_INTERNAL_FLAG(this, WINDOW_CONTENT_VALIDATED);
+}
+
+const int2 sharp::window_base::to_screen(const int2& window_pos) const
+{
+    int header_height = get_header_height();
+    if (header_height > 0) return int2(window_pos.x + posX, window_pos.y + posY + header_height + 1);
+    else return int2(window_pos.x + posX, window_pos.y + posY);
+}
+const int2 sharp::window_base::to_window(const int2& screen_pos) const
+{
+    int header_height = get_header_height();
+    if (header_height > 0) return int2(screen_pos.x - posX, screen_pos.y - posY - header_height - 1);
+    else return int2(screen_pos.x - posY, screen_pos.y - posY);
 }

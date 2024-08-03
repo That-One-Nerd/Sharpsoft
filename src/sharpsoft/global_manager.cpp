@@ -22,6 +22,9 @@ color back_col;
 int render_wait_ms;
 thread* render_thread = nullptr;
 
+double delta_time;
+double elapsed_time;
+
 vector<window_base*> windows;
 
 void sharp::initialize()
@@ -34,6 +37,8 @@ void sharp::initialize(const global_properties& props)
 
     back_col = props.background_color;
     render_wait_ms = 1000 / props.refresh_rate;
+    delta_time = 0;
+    elapsed_time = 0;
     
     init = true;
 }
@@ -49,6 +54,8 @@ void sharp::uninitialize()
         delete windows.at(i);
     }
     windows.clear();
+    delta_time = 0;
+    elapsed_time = 0;
 
     init = false;
 }
@@ -103,15 +110,20 @@ void sharp::internal::render_iter()
         if (!HAS_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED) ||
             (!HAS_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED) && win->win_features.update_header))
         {
+            ON_INTERNAL_FLAG(win, WINDOW_IS_IN_PAINT_MODE);
             win->paint_header();
+            OFF_INTERNAL_FLAG(win, WINDOW_IS_IN_PAINT_MODE);
             ON_INTERNAL_FLAG(win, WINDOW_HEADER_VALIDATED);
         }
         if (!HAS_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED))
         {
+            ON_INTERNAL_FLAG(win, WINDOW_IS_IN_PAINT_MODE);
             win->paint_content_back();
             win->paint();
+            OFF_INTERNAL_FLAG(win, WINDOW_IS_IN_PAINT_MODE);
             ON_INTERNAL_FLAG(win, WINDOW_CONTENT_VALIDATED);
         }
+        win->elapsed_time += delta_time;
     }
 }
 void sharp::internal::render_loop()
@@ -119,6 +131,9 @@ void sharp::internal::render_loop()
     thread::delay(50); // Wait a sec for the screen to be ready.
     while (true)
     {
+        // TODO: This could be improved with a proper chrono timer, but it's alright.
+        delta_time = 1.0 / render_wait_ms;
+        elapsed_time += delta_time;
         render_iter();
         thread::delay(render_wait_ms);
     }
@@ -151,6 +166,8 @@ void sharp::start()
 
     render_thread = new thread(internal::render_loop);
     render_thread->start();
+    delta_time = 0;
+    elapsed_time = 0;
 
     started = true;
 }
@@ -160,6 +177,8 @@ void sharp::end()
 
     render_thread->stop();
     delete render_thread;
+    delta_time = 0;
+    elapsed_time = 0;
 
     started = false;
 }
@@ -167,4 +186,13 @@ void sharp::end()
 bool sharp::is_started()
 {
     return started;
+}
+
+double sharp::get_delta_time()
+{
+    return delta_time;
+}
+double sharp::get_elapsed_time()
+{
+    return elapsed_time;
 }
